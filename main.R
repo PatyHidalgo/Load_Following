@@ -99,7 +99,7 @@ lm(formula = net_load_ramp_t_MWh ~ weekday
    data = hourly_01_2016
    )
 
-
+#test
 
 
 
