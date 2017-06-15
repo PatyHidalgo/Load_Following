@@ -133,22 +133,28 @@ summary(test_all_data)
 
 
 # picking an arbitrary training set
-training_2016 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10 | month==1 | day==2)
+training_2016 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
 test_set_2016 <- subset(hourly_2016, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
 
 # OLS without weekday variable
-ols_01_2016 <- lm(formula = net_load_ramp_t_MWh ~ hour + net_load_MWh 
-   + net_load_ramp_t_minus_1_MWh
-   + net_load_ramp_t_minus_2_MWh
-   + net_load_ramp_t_minus_3_MWh
-   + MWh
-   + wind_solar_ramp_t_MWh
-   + wind_solar_ramp_t_minus_1_MWh
-   + wind_solar_ramp_t_minus_2_MWh
-   + wind_solar_ramp_t_minus_3_MWh,
-   data = training_01_2016
+ols_2016 <- lm(formula = net_load_ramp_t_MWh ~ weekday 
+               + hour
+               + month 
+               + net_load_t_minus_1_MWh
+               + net_load_t_minus_2_MWh
+               + net_load_t_minus_3_MWh
+               + net_load_ramp_t_minus_1_MWh
+               + net_load_ramp_t_minus_2_MWh
+               + net_load_ramp_t_minus_3_MWh
+               + wind_solar_t_minus_1_MWh
+               + wind_solar_t_minus_2_MWh
+               + wind_solar_t_minus_3_MWh
+               + wind_solar_ramp_t_minus_1_MWh
+               + wind_solar_ramp_t_minus_2_MWh
+               + wind_solar_ramp_t_minus_3_MWh,
+               data = hourly_2016
 )
-summary(ols_01_2016)
+summary(ols_2016)
 
 # OLS less variables so they are more meaningful
 #ols_01_2016 <- lm(formula = net_load_ramp_t_MWh ~ net_load_ramp_t_minus_2_MWh
