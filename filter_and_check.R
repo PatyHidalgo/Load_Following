@@ -36,7 +36,7 @@ filter_and_check <- function(wind_solar_MM_YYYY){
                                                                       'day',
                                                                       'hour',
                                                                       'VALUE'))
-  names(rtm_wind_solar_MM_YYYY)[6]<-'MWh'
+  names(rtm_wind_solar_MM_YYYY)[6]<-'Wind_Solar_MWh'
   
   #rtm_wind_solar_MM_YYYY <- rtm_wind_solar_MM_YYYY[with(rtm_wind_solar_MM_YYYY, order(year, month, day, hour)), ]
   rtm_wind_solar_MM_YYYY<- rtm_wind_solar_MM_YYYY[order(rtm_wind_solar_MM_YYYY$year, 
@@ -44,12 +44,6 @@ filter_and_check <- function(wind_solar_MM_YYYY){
                                                         rtm_wind_solar_MM_YYYY$day,
                                                         rtm_wind_solar_MM_YYYY$hour),]
   
-  rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_MWh <- rtm_wind_solar_MM_YYYY$MWh - shift(rtm_wind_solar_MM_YYYY$MWh, type="lag", fill=0)
-  rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_minus_1_MWh <- shift(rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_MWh, type="lag", fill=0)
-  rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_minus_2_MWh <- shift(rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_minus_1_MWh, type="lag", fill=0)
-  rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_minus_3_MWh <- shift(rtm_wind_solar_MM_YYYY$wind_solar_ramp_t_minus_2_MWh, type="lag", fill=0)
-  
-  
-  
+
   return(rtm_wind_solar_MM_YYYY)
 }

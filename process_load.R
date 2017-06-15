@@ -78,12 +78,7 @@ process_load <- function(gen_MM_YYYY){
                                 net_load_hourly_MM_YYYY$month, 
                                 net_load_hourly_MM_YYYY$day,
                                 net_load_hourly_MM_YYYY$hour),]
-  
-  net_load_hourly_MM_YYYY$net_load_ramp_t_MWh <- net_load_hourly_MM_YYYY$net_load_MWh - shift(net_load_hourly_MM_YYYY$net_load_MWh, type="lag", fill=0)
-  net_load_hourly_MM_YYYY$net_load_ramp_t_minus_1_MWh <- shift(net_load_hourly_MM_YYYY$net_load_ramp_t_MWh, type="lag", fill=0)
-  net_load_hourly_MM_YYYY$net_load_ramp_t_minus_2_MWh <- shift(net_load_hourly_MM_YYYY$net_load_ramp_t_minus_1_MWh, type="lag", fill=0)
-  net_load_hourly_MM_YYYY$net_load_ramp_t_minus_3_MWh <- shift(net_load_hourly_MM_YYYY$net_load_ramp_t_minus_2_MWh, type="lag", fill=0)
-  
+
   
   return(net_load_hourly_MM_YYYY)
 }
