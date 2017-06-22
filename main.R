@@ -156,6 +156,7 @@ ols_2016 <- lm(formula = net_load_ramp_t_MWh ~ hour
 )
 summary(ols_2016)
 
+
 # OLS less variables so they are more meaningful
 #ols_01_2016 <- lm(formula = net_load_ramp_t_MWh ~ net_load_ramp_t_minus_2_MWh
 #                  + wind_solar_ramp_t_minus_2_MWh
@@ -178,41 +179,32 @@ plot_this <- subset(test_set_2016, select=c('timestamp.x',
                                                       'net_load_ramp_t_MWh',
                                                       'ramp_prediction_2016'))
   
-write.csv(plot_this, "plot_this.csv")
+#write.csv(plot_this, "plot_this.csv")
+
+# OLS with hour, month and weekday as factors (dummy variables)
+ols_2016_discrete <- lm(formula = net_load_ramp_t_MWh ~ factor(hour)
+                        + factor(weekday)
+                        + factor(month) 
+                        + net_load_t_minus_1_MWh
+                        + net_load_t_minus_2_MWh
+                        + net_load_t_minus_3_MWh
+                        + net_load_ramp_t_minus_1_MWh
+                        + net_load_ramp_t_minus_2_MWh
+                        + net_load_ramp_t_minus_3_MWh
+                        + wind_solar_t_minus_1_MWh
+                        + wind_solar_t_minus_2_MWh
+                        + wind_solar_t_minus_3_MWh
+                        + wind_solar_ramp_t_minus_1_MWh
+                        + wind_solar_ramp_t_minus_2_MWh
+                        + wind_solar_ramp_t_minus_3_MWh,
+               data = hourly_2016
+)
+summary(ols_2016_discrete)
+model_v1 <- summary(ols_2016_discrete)
+model_v1$coefficients["factor(month)12",1]
+
 #############
 # 
-# ggplot(plot_this, aes(x = plot_this$timestamp.x)) + 
-#   geom_line(aes(y = plot_this$net_load_ramp_t_MWh), colour="blue") + 
-#   geom_line(aes(y = plot_this$ramp_prediction_01_2016), colour = "grey") + 
-#   ylab(label="Number of new members") + 
-#   xlab("Week")  
-#   
-# 
-# 
-# #ugh!!
-# plot_01_2016 <- ggplot(test_set_01_2016, aes(timestamp.x)) +
-#   geom_line(aes(y = ramp_prediction_01_2016, colour = "red")) 
-# + geom_line(aes(y = net_load_ramp_t_MWh, colour =  "blue"))
-# 
-# #try 2
-# library("reshape2")
-# library("ggplot2")
-# 
-# test_data_long <- melt(test_set_01_2016, id="timestamp.x")  # convert to long format
-# 
-# ggplot(data=test_data_long,
-#        aes(x=timestamp.x, y=value, colour=variable)) +
-#   geom_line()
-# 
-# # try 3
-# 
-# ggplot(joinsByWeek, aes(x = week)) + 
-#   geom_line(aes(y = rolling), colour="blue") + 
-#   geom_line(aes(y = actual), colour = "grey") + 
-#   ylab(label="Number of new members") + 
-#   xlab("Week")
-# 
-# 
-# 
+
 
 
