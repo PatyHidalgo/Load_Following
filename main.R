@@ -136,6 +136,9 @@ summary(test_all_data)
 training_2016 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
 test_set_2016 <- subset(hourly_2016, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
 
+
+# Ordinary least Squares #######################################################################################
+
 # [Notes] Should we scale and center the data? scale(cars$speed, center=TRUE, scale=FALSE)
 # OLS without weekday variable
 ols_2016 <- lm(formula = net_load_ramp_t_MWh ~ hour
@@ -214,9 +217,87 @@ plot_this <- subset(test_set_2016, select=c('timestamp.x',
 
 write.csv(plot_this, "plot_this_discrete.csv")
 
+# OLS with 3 weeks or training set and 1 week for predictions (per month for 2016) ###########################################################
+
+# picking an arbitrary training set
+test_set_2016_v2 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
+training_set_2016_v2 <- subset(hourly_2016, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
+
+ols_2016_discrete_v2 <- lm(formula = net_load_ramp_t_MWh ~ factor(hour)
+                        + factor(weekday)
+                        + factor(month) 
+                        + net_load_t_minus_1_MWh
+                        + net_load_t_minus_2_MWh
+                        + net_load_t_minus_3_MWh
+                        + net_load_ramp_t_minus_1_MWh
+                        + net_load_ramp_t_minus_2_MWh
+                        + net_load_ramp_t_minus_3_MWh
+                        + wind_solar_t_minus_1_MWh
+                        + wind_solar_t_minus_2_MWh
+                        + wind_solar_t_minus_3_MWh
+                        + wind_solar_ramp_t_minus_1_MWh
+                        + wind_solar_ramp_t_minus_2_MWh
+                        + wind_solar_ramp_t_minus_3_MWh,
+                        data = training_set_2016_v2
+)
+summary(ols_2016_discrete_v2)
+
+test_set_2016_v2$ramp_prediction_dummy <- predict(ols_2016_discrete_v2, test_set_2016_v2)
+
+plot_this <- subset(test_set_2016_v2, select=c('timestamp.x', 
+                                            'net_load_ramp_t_MWh',
+                                            'ramp_prediction_dummy'))
+
+write.csv(plot_this, "plot_this_discrete_v2.csv")
+
+# plot worked (fix x axis display): 
+#df <- data.frame(plot_this$timestamp.x, plot_this$net_load_ramp_t_MWh, plot_this$ramp_prediction_dummy)
+#ggplot(df, aes(plot_this$timestamp.x, y = value, color = variable)) + 
+#  geom_point(aes(y = plot_this$net_load_ramp_t_MWh, col = "net_load_ramp_t_MWh")) + 
+#  geom_point(aes(y = plot_this$ramp_prediction_dummy, col = "ramp_prediction_dummy"))
 
 
+# OLS with 6 hours of past features ##################################################################################
 
+ols_2016_discrete_v3 <- lm(formula = net_load_ramp_t_MWh ~ factor(hour)
+                           + factor(weekday)
+                           + factor(month) 
+                           + net_load_t_minus_1_MWh
+                           + net_load_t_minus_2_MWh
+                           + net_load_t_minus_3_MWh
+                           + net_load_t_minus_4_MWh
+                           + net_load_t_minus_5_MWh
+                           + net_load_t_minus_6_MWh
+                           + net_load_ramp_t_minus_1_MWh
+                           + net_load_ramp_t_minus_2_MWh
+                           + net_load_ramp_t_minus_3_MWh
+                           + wind_solar_t_minus_1_MWh
+                           + wind_solar_t_minus_2_MWh
+                           + wind_solar_t_minus_3_MWh
+                           + wind_solar_t_minus_4_MWh
+                           + wind_solar_t_minus_5_MWh
+                           + wind_solar_t_minus_6_MWh
+                           + wind_solar_ramp_t_minus_1_MWh
+                           + wind_solar_ramp_t_minus_2_MWh
+                           + wind_solar_ramp_t_minus_3_MWh,
+                           data = training_set_2016_v2
+)
+summary(ols_2016_discrete_v3)
+
+test_set_2016_v2$ramp_prediction_dummy_6hrs <- predict(ols_2016_discrete_v3, test_set_2016_v2)
+
+plot_this <- subset(test_set_2016_v2, select=c('timestamp.x', 
+                                               'net_load_ramp_t_MWh',
+                                               'ramp_prediction_dummy',
+                                               'ramp_prediction_dummy_6hrs'))
+
+write.csv(plot_this, "plot_this_discrete_v3.csv")
+
+# Lasso (1-norm) ######################################################################################################
+
+# install.packages("glmnet", repos = "http://cran.us.r-project.org")
+
+library(glmnet)
 
 
 #############

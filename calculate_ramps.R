@@ -16,10 +16,16 @@ calculate_ramps <- function(hourly_MM_YYYY){
   hourly_MM_YYYY$net_load_t_minus_1_MWh <- shift(hourly_MM_YYYY$net_load_MWh, type="lag", fill=0)
   hourly_MM_YYYY$net_load_t_minus_2_MWh <- shift(hourly_MM_YYYY$net_load_t_minus_1_MWh, type="lag", fill=0)
   hourly_MM_YYYY$net_load_t_minus_3_MWh <- shift(hourly_MM_YYYY$net_load_t_minus_2_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$net_load_t_minus_4_MWh <- shift(hourly_MM_YYYY$net_load_t_minus_3_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$net_load_t_minus_5_MWh <- shift(hourly_MM_YYYY$net_load_t_minus_4_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$net_load_t_minus_6_MWh <- shift(hourly_MM_YYYY$net_load_t_minus_5_MWh, type="lag", fill=0)
   
   hourly_MM_YYYY$wind_solar_t_minus_1_MWh <- shift(hourly_MM_YYYY$Wind_Solar_MWh, type="lag", fill=0)
   hourly_MM_YYYY$wind_solar_t_minus_2_MWh <- shift(hourly_MM_YYYY$wind_solar_t_minus_1_MWh, type="lag", fill=0)
   hourly_MM_YYYY$wind_solar_t_minus_3_MWh <- shift(hourly_MM_YYYY$wind_solar_t_minus_2_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$wind_solar_t_minus_4_MWh <- shift(hourly_MM_YYYY$wind_solar_t_minus_3_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$wind_solar_t_minus_5_MWh <- shift(hourly_MM_YYYY$wind_solar_t_minus_4_MWh, type="lag", fill=0)
+  hourly_MM_YYYY$wind_solar_t_minus_6_MWh <- shift(hourly_MM_YYYY$wind_solar_t_minus_5_MWh, type="lag", fill=0)
 
   return(hourly_MM_YYYY)
 
