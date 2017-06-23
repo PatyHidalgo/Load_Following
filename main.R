@@ -200,8 +200,24 @@ ols_2016_discrete <- lm(formula = net_load_ramp_t_MWh ~ factor(hour)
                data = hourly_2016
 )
 summary(ols_2016_discrete)
-model_v1 <- summary(ols_2016_discrete)
-model_v1$coefficients["factor(month)12",1]
+#model_v1 <- summary(ols_2016_discrete)
+#model_v1$coefficients["factor(month)12",1]
+
+test_set_2016$ramp_prediction_dummy <- predict(ols_2016_discrete, test_set_2016)
+#ols_2016
+#test_set_2016$test <- predict(ols_2016, test_set_2016)
+
+plot_this <- subset(test_set_2016, select=c('timestamp.x', 
+                                            'net_load_ramp_t_MWh',
+                                            'ramp_prediction_2016',
+                                            'ramp_prediction_dummy'))
+
+write.csv(plot_this, "plot_this_discrete.csv")
+
+
+
+
+
 
 #############
 # 
