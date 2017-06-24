@@ -299,6 +299,44 @@ write.csv(plot_this, "plot_this_discrete_v3.csv")
 
 library(glmnet)
 
+# creating dataframe for function glmnet:
+columns <- subset(test_set_2016_v2, select=c('hour', 
+                                             'weekday',
+                                             'month',
+                                             'net_load_t_minus_1_MWh',
+                                             'net_load_t_minus_2_MWh',
+                                             'net_load_t_minus_3_MWh',
+                                             'net_load_t_minus_4_MWh',
+                                             'net_load_t_minus_5_MWh',
+                                             'net_load_t_minus_6_MWh',
+                                             'wind_solar_t_minus_1_MWh',
+                                             'wind_solar_t_minus_2_MWh',
+                                             'wind_solar_t_minus_3_MWh',
+                                             'wind_solar_t_minus_4_MWh',
+                                             'wind_solar_t_minus_5_MWh',
+                                             'wind_solar_t_minus_6_MWh'))
+
+features <- data.frame(
+                      factor(columns$hour),
+                       factor(columns$weekday),
+                       factor(columns$month),
+                       columns$net_load_t_minus_1_MWh,
+                       columns$net_load_t_minus_2_MWh,
+                       columns$net_load_t_minus_3_MWh,
+                       columns$net_load_t_minus_4_MWh,
+                       columns$net_load_t_minus_5_MWh,
+                       columns$net_load_t_minus_6_MWh,
+                       columns$wind_solar_t_minus_1_MWh,
+                       columns$wind_solar_t_minus_2_MWh,
+                       columns$wind_solar_t_minus_3_MWh,
+                       columns$wind_solar_t_minus_4_MWh,
+                       columns$wind_solar_t_minus_5_MWh,
+                       columns$wind_solar_t_minus_6_MWh
+                       )
+
+features_dummied <- model.matrix(features)
+
+lasso_2016 = glmnet(features, test_set_2016_v2$net_load_ramp_t_MWh)
 
 #############
 # 
