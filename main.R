@@ -299,10 +299,6 @@ plot_this <- subset(test_set_2016_v2, select=c('timestamp.x',
 
 library(glmnet)
 
-# picking an arbitrary training set
-#test_set_2016_v2 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
-#training_set_2016_v2 <- subset(hourly_2016, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
-
 # creating dataframe for function glmnet:
 hourly_2016_dummies <- subset(hourly_2016, select=c('year', 'month', 'day', 'hour', 'weekday',
                                                  'net_load_MWh',
@@ -322,9 +318,9 @@ hourly_2016_dummies <- subset(hourly_2016, select=c('year', 'month', 'day', 'hou
 
 hourly_2016_dummies <- data.frame(
                       factor(hourly_2016_dummies$month),
-                      hourly_2016_dummies$day,
                       factor(hourly_2016_dummies$hour),
                       factor(hourly_2016_dummies$weekday),
+                      hourly_2016_dummies$day,
                       hourly_2016_dummies$net_load_MWh,
                       hourly_2016_dummies$net_load_ramp_t_MWh,
                       hourly_2016_dummies$net_load_t_minus_1_MWh,
@@ -342,9 +338,9 @@ hourly_2016_dummies <- data.frame(
                        )
 
 names(hourly_2016_dummies)[1]<-'month'
-names(hourly_2016_dummies)[2]<-'day'
-names(hourly_2016_dummies)[3]<-'hour'
-names(hourly_2016_dummies)[4]<-'weekday'
+names(hourly_2016_dummies)[2]<-'hour'
+names(hourly_2016_dummies)[3]<-'weekday'
+names(hourly_2016_dummies)[4]<-'day'
 names(hourly_2016_dummies)[5]<-'net_load_MWh'
 names(hourly_2016_dummies)[6]<-'net_load_ramp_t_MWh'
 names(hourly_2016_dummies)[7]<-'net_load_t_minus_1_MWh'
@@ -360,9 +356,26 @@ names(hourly_2016_dummies)[16]<-'wind_solar_t_minus_4_MWh'
 names(hourly_2016_dummies)[17]<-'wind_solar_t_minus_5_MWh'
 names(hourly_2016_dummies)[18]<-'wind_solar_t_minus_6_MWh'
 
-hourly_2016_dummies <- model.matrix( ~ .-1, hourly_2016_dummies)
+# picking an arbitrary training set
+test_set <- subset(hourly_2016_dummies, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
+training <- subset(hourly_2016_dummies, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
 
-lasso_2016 = glmnet(features, test_set_2016_v2$net_load_ramp_t_MWh)
+training <- model.matrix( ~ .-1, training)
+
+
+# continue here
+lasso_2016 = glmnet(training[,c("month1",
+                                "month2",
+                                "month3",
+                                "month4",
+                                "month5",
+                                "month6",
+                                "month7",
+                                "month8",
+                                "month9",
+                                "month10",
+                                "month11",
+                                "month12",)], training[,c("net_load_ramp_t_MWh")], alpha=1)
 
 #############
 # 
