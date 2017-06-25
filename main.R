@@ -215,7 +215,7 @@ plot_this <- subset(test_set_2016, select=c('timestamp.x',
                                             'ramp_prediction_2016',
                                             'ramp_prediction_dummy'))
 
-write.csv(plot_this, "plot_this_discrete.csv")
+#write.csv(plot_this, "plot_this_discrete.csv")
 
 # OLS with 3 weeks or training set and 1 week for predictions (per month for 2016) ###########################################################
 
@@ -248,7 +248,7 @@ plot_this <- subset(test_set_2016_v2, select=c('timestamp.x',
                                             'net_load_ramp_t_MWh',
                                             'ramp_prediction_dummy'))
 
-write.csv(plot_this, "plot_this_discrete_v2.csv")
+#write.csv(plot_this, "plot_this_discrete_v2.csv")
 
 # plot worked (fix x axis display): 
 #df <- data.frame(plot_this$timestamp.x, plot_this$net_load_ramp_t_MWh, plot_this$ramp_prediction_dummy)
@@ -291,7 +291,7 @@ plot_this <- subset(test_set_2016_v2, select=c('timestamp.x',
                                                'ramp_prediction_dummy',
                                                'ramp_prediction_dummy_6hrs'))
 
-write.csv(plot_this, "plot_this_discrete_v3.csv")
+#write.csv(plot_this, "plot_this_discrete_v3.csv")
 
 # Lasso (1-norm) ######################################################################################################
 
@@ -299,10 +299,14 @@ write.csv(plot_this, "plot_this_discrete_v3.csv")
 
 library(glmnet)
 
+# picking an arbitrary training set
+#test_set_2016_v2 <- subset(hourly_2016, day==4 | day==5 | day==6 | day==7 | day==8 | day==9 | day==10)
+#training_set_2016_v2 <- subset(hourly_2016, day!=4 & day!=5 & day!=6 & day!=7 & day!=8 & day!=9 & day!=10)
+
 # creating dataframe for function glmnet:
-columns <- subset(test_set_2016_v2, select=c('hour', 
-                                             'weekday',
-                                             'month',
+hourly_2016_dummies <- subset(hourly_2016, select=c('year', 'month', 'day', 'hour', 'weekday',
+                                                 'net_load_MWh',
+                                                 'net_load_ramp_t_MWh',
                                              'net_load_t_minus_1_MWh',
                                              'net_load_t_minus_2_MWh',
                                              'net_load_t_minus_3_MWh',
@@ -316,25 +320,47 @@ columns <- subset(test_set_2016_v2, select=c('hour',
                                              'wind_solar_t_minus_5_MWh',
                                              'wind_solar_t_minus_6_MWh'))
 
-features <- data.frame(
-                      factor(columns$hour),
-                       factor(columns$weekday),
-                       factor(columns$month),
-                       columns$net_load_t_minus_1_MWh,
-                       columns$net_load_t_minus_2_MWh,
-                       columns$net_load_t_minus_3_MWh,
-                       columns$net_load_t_minus_4_MWh,
-                       columns$net_load_t_minus_5_MWh,
-                       columns$net_load_t_minus_6_MWh,
-                       columns$wind_solar_t_minus_1_MWh,
-                       columns$wind_solar_t_minus_2_MWh,
-                       columns$wind_solar_t_minus_3_MWh,
-                       columns$wind_solar_t_minus_4_MWh,
-                       columns$wind_solar_t_minus_5_MWh,
-                       columns$wind_solar_t_minus_6_MWh
+hourly_2016_dummies <- data.frame(
+                      factor(hourly_2016_dummies$month),
+                      hourly_2016_dummies$day,
+                      factor(hourly_2016_dummies$hour),
+                      factor(hourly_2016_dummies$weekday),
+                      hourly_2016_dummies$net_load_MWh,
+                      hourly_2016_dummies$net_load_ramp_t_MWh,
+                      hourly_2016_dummies$net_load_t_minus_1_MWh,
+                      hourly_2016_dummies$net_load_t_minus_2_MWh,
+                      hourly_2016_dummies$net_load_t_minus_3_MWh,
+                      hourly_2016_dummies$net_load_t_minus_4_MWh,
+                      hourly_2016_dummies$net_load_t_minus_5_MWh,
+                      hourly_2016_dummies$net_load_t_minus_6_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_1_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_2_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_3_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_4_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_5_MWh,
+                      hourly_2016_dummies$wind_solar_t_minus_6_MWh
                        )
 
-features_dummied <- model.matrix(features)
+names(hourly_2016_dummies)[1]<-'month'
+names(hourly_2016_dummies)[2]<-'day'
+names(hourly_2016_dummies)[3]<-'hour'
+names(hourly_2016_dummies)[4]<-'weekday'
+names(hourly_2016_dummies)[5]<-'net_load_MWh'
+names(hourly_2016_dummies)[6]<-'net_load_ramp_t_MWh'
+names(hourly_2016_dummies)[7]<-'net_load_t_minus_1_MWh'
+names(hourly_2016_dummies)[8]<-'net_load_t_minus_2_MWh'
+names(hourly_2016_dummies)[9]<-'net_load_t_minus_3_MWh'
+names(hourly_2016_dummies)[10]<-'net_load_t_minus_4_MWh'
+names(hourly_2016_dummies)[11]<-'net_load_t_minus_5_MWh'
+names(hourly_2016_dummies)[12]<-'net_load_t_minus_6_MWh'
+names(hourly_2016_dummies)[13]<-'wind_solar_t_minus_1_MWh'
+names(hourly_2016_dummies)[14]<-'wind_solar_t_minus_2_MWh'
+names(hourly_2016_dummies)[15]<-'wind_solar_t_minus_3_MWh'
+names(hourly_2016_dummies)[16]<-'wind_solar_t_minus_4_MWh'
+names(hourly_2016_dummies)[17]<-'wind_solar_t_minus_5_MWh'
+names(hourly_2016_dummies)[18]<-'wind_solar_t_minus_6_MWh'
+
+hourly_2016_dummies <- model.matrix( ~ .-1, hourly_2016_dummies)
 
 lasso_2016 = glmnet(features, test_set_2016_v2$net_load_ramp_t_MWh)
 
