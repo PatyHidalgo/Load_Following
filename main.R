@@ -477,8 +477,184 @@ names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "actual_ramp"
 write.csv(plot_this, "ridge_and_lasso.csv")
-#############
-# 
 
+
+# Lasso and Ridge cross validated ############
+
+# Lasso
+lasso_2016 = cv.glmnet(training[,c("month1",
+                                "month2",
+                                "month3",
+                                "month4",
+                                "month5",
+                                "month6",
+                                "month7",
+                                "month8",
+                                "month9",
+                                "month10",
+                                "month11",
+                                "month12", 
+                                "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                "hour20", "hour21", "hour22", "hour23",
+                                "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                "weekdayTuesday","weekdayWednesday",
+                                "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")], 
+                    training[,c("net_load_ramp_t_MWh")], alpha=1)
+
+# good figure on selection of lambda:
+plot(lasso_2016)
+
+lasso_2016$lambda.min
+
+# lasso prediction
+prediction_lasso <- predict(lasso_2016, test_set[,c("month1",
+                                                    "month2",
+                                                    "month3",
+                                                    "month4",
+                                                    "month5",
+                                                    "month6",
+                                                    "month7",
+                                                    "month8",
+                                                    "month9",
+                                                    "month10",
+                                                    "month11",
+                                                    "month12", 
+                                                    "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                                    "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                                    "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                                    "hour20", "hour21", "hour22", "hour23",
+                                                    "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                                    "weekdayTuesday","weekdayWednesday",
+                                                    "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                                    "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                                    "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                                    "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")],
+                            s="lambda.min")
+ 
+# Ridge
+ridge_2016 = cv.glmnet(training[,c("month1",
+                                "month2",
+                                "month3",
+                                "month4",
+                                "month5",
+                                "month6",
+                                "month7",
+                                "month8",
+                                "month9",
+                                "month10",
+                                "month11",
+                                "month12", 
+                                "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                "hour20", "hour21", "hour22", "hour23",
+                                "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                "weekdayTuesday","weekdayWednesday",
+                                "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")], 
+                    training[,c("net_load_ramp_t_MWh")], alpha=0)
+
+plot(ridge_2016)
+
+
+
+# ridge prediction
+prediction_ridge <- predict(ridge_2016, test_set[,c("month1",
+                                                    "month2",
+                                                    "month3",
+                                                    "month4",
+                                                    "month5",
+                                                    "month6",
+                                                    "month7",
+                                                    "month8",
+                                                    "month9",
+                                                    "month10",
+                                                    "month11",
+                                                    "month12", 
+                                                    "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                                    "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                                    "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                                    "hour20", "hour21", "hour22", "hour23",
+                                                    "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                                    "weekdayTuesday","weekdayWednesday",
+                                                    "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                                    "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                                    "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                                    "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")],
+                            s="lambda.min")
+
+
+# Least Squares (lambda=0)
+
+least_2016 = cv.glmnet(training[,c("month1",
+                                   "month2",
+                                   "month3",
+                                   "month4",
+                                   "month5",
+                                   "month6",
+                                   "month7",
+                                   "month8",
+                                   "month9",
+                                   "month10",
+                                   "month11",
+                                   "month12", 
+                                   "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                   "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                   "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                   "hour20", "hour21", "hour22", "hour23",
+                                   "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                   "weekdayTuesday","weekdayWednesday",
+                                   "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                   "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                   "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                   "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")], 
+                       training[,c("net_load_ramp_t_MWh")], alpha=0)
+
+plot(least_2016)
+
+
+
+# least prediction
+prediction_least <- predict(least_2016, test_set[,c("month1",
+                                                    "month2",
+                                                    "month3",
+                                                    "month4",
+                                                    "month5",
+                                                    "month6",
+                                                    "month7",
+                                                    "month8",
+                                                    "month9",
+                                                    "month10",
+                                                    "month11",
+                                                    "month12", 
+                                                    "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                                    "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                                    "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                                    "hour20", "hour21", "hour22", "hour23",
+                                                    "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                                    "weekdayTuesday","weekdayWednesday",
+                                                    "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                                    "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                                    "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                                    "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")],
+                            s=0)
+
+
+# Save to csv to plot ####################
+plot_this <- cbind(prediction_ridge, prediction_lasso, prediction_least, test_set[,c("net_load_ramp_t_MWh")])
+names(plot_this)[1] <- 'ridge'
+names(plot_this)[2] <- "lasso"
+names(plot_this)[3] <- "least squares"
+names(plot_this)[4] <- "actual_ramp"
+write.csv(plot_this, "ridge_lasso_leastsquares_optimal_lambda.csv")
+
+# continue: compare least squares from glmnet() and lm()
 
 
