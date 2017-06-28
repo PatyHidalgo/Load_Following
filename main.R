@@ -300,7 +300,7 @@ plot_this <- subset(test_set_2016_v2, select=c('timestamp.x',
 library(glmnet)
 
 # creating dataframe for function glmnet:
-hourly_2016_dummies <- subset(hourly_2016, select=c('year', 'month', 'day', 'hour', 'weekday',
+hourly_2016_dummies <- subset(hourly_2016, select=c('month', 'day', 'hour', 'weekday',
                                                  'net_load_MWh',
                                                  'net_load_ramp_t_MWh',
                                              'net_load_t_minus_1_MWh',
@@ -363,7 +363,20 @@ training <- subset(hourly_2016_dummies, day!=4 & day!=5 & day!=6 & day!=7 & day!
 training <- model.matrix( ~ .-1, training)
 
 
-# continue here
+# worked:
+#lasso_2016 = glmnet(training[,c("month1",
+#                                "month2",
+#                                "month3",
+#                                "month4",
+#                                "month5",
+#                                "month6",
+##                                "month7",
+#                                "month8",
+#                                "month9",
+#                                "month10",
+#                                "month11",
+#                                "month12")], training[,c("net_load_ramp_t_MWh")], alpha=1)
+
 lasso_2016 = glmnet(training[,c("month1",
                                 "month2",
                                 "month3",
@@ -375,7 +388,49 @@ lasso_2016 = glmnet(training[,c("month1",
                                 "month9",
                                 "month10",
                                 "month11",
-                                "month12",)], training[,c("net_load_ramp_t_MWh")], alpha=1)
+                                "month12", 
+                                "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                "hour20", "hour21", "hour22", "hour23",
+                                "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                "weekdayTuesday","weekdayWednesday",
+                                "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")], 
+                    training[,c("net_load_ramp_t_MWh")], alpha=1)
+
+
+plot(lasso_2016)
+print(lasso_2016)
+
+ridge_2016 = glmnet(training[,c("month1",
+                                "month2",
+                                "month3",
+                                "month4",
+                                "month5",
+                                "month6",
+                                "month7",
+                                "month8",
+                                "month9",
+                                "month10",
+                                "month11",
+                                "month12", 
+                                "hour1", "hour2", "hour3", "hour4", "hour5", 
+                                "hour6", "hour7", "hour8", "hour9", "hour10", "hour11", "hour12",
+                                "hour13", "hour14", "hour15", "hour16", "hour17", "hour18", "hour19", 
+                                "hour20", "hour21", "hour22", "hour23",
+                                "weekdayMonday", "weekdaySaturday", "weekdaySunday", "weekdayThursday",
+                                "weekdayTuesday","weekdayWednesday",
+                                "net_load_t_minus_1_MWh", "net_load_t_minus_2_MWh", "net_load_t_minus_3_MWh",
+                                "net_load_t_minus_4_MWh", "net_load_t_minus_5_MWh", "net_load_t_minus_6_MWh",
+                                "wind_solar_t_minus_1_MWh", "wind_solar_t_minus_2_MWh", "wind_solar_t_minus_3_MWh",
+                                "wind_solar_t_minus_4_MWh", "wind_solar_t_minus_5_MWh", "wind_solar_t_minus_6_MWh")], 
+                    training[,c("net_load_ramp_t_MWh")], alpha=0)
+
+plot(ridge_2016)
+print(ridge_2016)
 
 #############
 # 
