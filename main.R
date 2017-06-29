@@ -12,6 +12,7 @@ rm(list = ls())
 setwd("/Users/paty/Documents/Research/Load_following/CAISO_OASIS")
 library("ggplot2")
 library(data.table)
+library(gbm)
 
 source("filter_and_check.R")
 source("process_load.R")
@@ -476,7 +477,7 @@ plot_this <- cbind(prediction_ridge, prediction_lasso, test_set[,c("net_load_ram
 names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "actual_ramp"
-write.csv(plot_this, "ridge_and_lasso.csv")
+#write.csv(plot_this, "ridge_and_lasso.csv")
 
 
 # Lasso and Ridge cross validated ############
@@ -653,8 +654,16 @@ names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "least squares"
 names(plot_this)[4] <- "actual_ramp"
-write.csv(plot_this, "ridge_lasso_leastsquares_optimal_lambda.csv")
+#write.csv(plot_this, "ridge_lasso_leastsquares_optimal_lambda.csv")
 
-# continue: compare least squares from glmnet() and lm()
+# for another time: compare least squares from glmnet() and lm()
+
+# DECISION TREE (BOOSTED) #############################################################################################
+
+# for reproducability:
+set.seed(1)
+
+
+
 
 
