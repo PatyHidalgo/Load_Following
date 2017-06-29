@@ -689,7 +689,7 @@ decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(m
                              data = training_dt,
                              n.trees = 2000,
                              shrinkage = .1,
-                             n.minobsinnode = 200, 
+                             n.minobsinnode = 20, # 200
                              cv.folds = 5,
                              n.cores = 1)
 # optimal number of trees
@@ -711,8 +711,8 @@ decision_tree_cv_optimal = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + 
                        #      distribution = "bernoulli",
                        data = training_dt,
                        n.trees = bestTreeForPrediction,
-                       shrinkage = .1,
-                       n.minobsinnode = 200, 
+                       shrinkage = .1, # (tree in the expansion) Also known as the learning rate or step-size reduction.
+                       n.minobsinnode = 20, #200 # minimum number of observation per node
                        cv.folds = 5,
                        n.cores = 1)
 
@@ -739,7 +739,7 @@ test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optima
 
 plot_this <- subset(test_set_dt, select=c('net_load_ramp_t_MWh', 'prediction_decision_tree'))
 
-write.csv(plot_this, "decision_tree.csv")
+write.csv(plot_this, "decision_tree_v2.csv")
 
 
 
