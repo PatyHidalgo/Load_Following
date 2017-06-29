@@ -672,22 +672,76 @@ test_set_dt <- as.data.frame(test_set)
 
 
 
-decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + month2 + month3 + month4 + month5 + month6
-                       + month7 + month8 + month9 + month10 + month11 + month12
-                       + hour1 + hour2 + hour3 + hour4 + hour5 + hour6 + hour7 + hour8 + hour9 + hour10 + hour11 + hour12
-                       + hour13 + hour14 + hour15 + hour16 + hour17 + hour18 + hour19 + hour20 + hour21 + hour22 + hour23
-                       + weekdayMonday + weekdaySaturday + weekdaySunday + weekdayThursday + weekdayTuesday + weekdayWednesday
+decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
+                       + factor(month4) + factor(month5) + factor(month6)
+                       + factor(month7) + factor(month8) + factor(month9) + factor(month10) + factor(month11) + factor(month12)
+                       + factor(hour1) + factor(hour2) + factor(hour3) + factor(hour4) + factor(hour5) + factor(hour6)
+                       + factor(hour7) + factor(hour8) + factor(hour9) + factor(hour10) + factor(hour11) + factor(hour12)
+                       + factor(hour13) + factor(hour14) + factor(hour15) + factor(hour16) + factor(hour17) + factor(hour18)
+                       + factor(hour19) + factor(hour20) + factor(hour21) + factor(hour22) + factor(hour23)
+                       + factor(weekdayMonday) + factor(weekdaySaturday) + factor(weekdaySunday) + factor(weekdayThursday)
+                       + factor(weekdayTuesday) + factor(weekdayWednesday)
                        + net_load_t_minus_1_MWh + net_load_t_minus_2_MWh + net_load_t_minus_3_MWh 
                        + net_load_t_minus_4_MWh + net_load_t_minus_5_MWh + net_load_t_minus_6_MWh
                        + wind_solar_t_minus_1_MWh + wind_solar_t_minus_2_MWh + wind_solar_t_minus_3_MWh
                        + wind_solar_t_minus_4_MWh + wind_solar_t_minus_5_MWh + wind_solar_t_minus_6_MWh,
                        #      distribution = "bernoulli",
                              data = training_dt,
-                             n.trees = 200,
+                             n.trees = 2000,
                              shrinkage = .1,
                              n.minobsinnode = 200, 
                              cv.folds = 5,
                              n.cores = 1)
+# optimal number of trees
+bestTreeForPrediction = gbm.perf(decision_tree_cv)
+
+decision_tree_cv_optimal = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
+                       + factor(month4) + factor(month5) + factor(month6)
+                       + factor(month7) + factor(month8) + factor(month9) + factor(month10) + factor(month11) + factor(month12)
+                       + factor(hour1) + factor(hour2) + factor(hour3) + factor(hour4) + factor(hour5) + factor(hour6)
+                       + factor(hour7) + factor(hour8) + factor(hour9) + factor(hour10) + factor(hour11) + factor(hour12)
+                       + factor(hour13) + factor(hour14) + factor(hour15) + factor(hour16) + factor(hour17) + factor(hour18)
+                       + factor(hour19) + factor(hour20) + factor(hour21) + factor(hour22) + factor(hour23)
+                       + factor(weekdayMonday) + factor(weekdaySaturday) + factor(weekdaySunday) + factor(weekdayThursday)
+                       + factor(weekdayTuesday) + factor(weekdayWednesday)
+                       + net_load_t_minus_1_MWh + net_load_t_minus_2_MWh + net_load_t_minus_3_MWh 
+                       + net_load_t_minus_4_MWh + net_load_t_minus_5_MWh + net_load_t_minus_6_MWh
+                       + wind_solar_t_minus_1_MWh + wind_solar_t_minus_2_MWh + wind_solar_t_minus_3_MWh
+                       + wind_solar_t_minus_4_MWh + wind_solar_t_minus_5_MWh + wind_solar_t_minus_6_MWh,
+                       #      distribution = "bernoulli",
+                       data = training_dt,
+                       n.trees = bestTreeForPrediction,
+                       shrinkage = .1,
+                       n.minobsinnode = 200, 
+                       cv.folds = 5,
+                       n.cores = 1)
+
+# prediction
+
+
+test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optimal,
+                                newdata = subset(test_set_dt, 
+                                                 select = c(month1, month2, month3, month4, month5, month6, month7,
+                                                            month8, month9, month10, month11, month12, 
+                                                            hour1, hour2, hour3, hour4, hour5, hour6, hour7, hour8, hour9,
+                                                            hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17,
+                                                            hour18, hour19, hour20, hour21, hour22, hour23,
+                                                            weekdayMonday, weekdaySaturday, weekdaySunday, weekdayThursday,
+                                                            weekdayTuesday, weekdayWednesday, 
+                                                            net_load_t_minus_1_MWh, net_load_t_minus_2_MWh, 
+                                                            net_load_t_minus_3_MWh, net_load_t_minus_4_MWh,
+                                                            net_load_t_minus_5_MWh, net_load_t_minus_6_MWh,
+                                                            wind_solar_t_minus_1_MWh, wind_solar_t_minus_2_MWh,
+                                                            wind_solar_t_minus_3_MWh, wind_solar_t_minus_4_MWh,
+                                                            wind_solar_t_minus_5_MWh, wind_solar_t_minus_6_MWh)),
+                                n.trees = bestTreeForPrediction,
+                                type = "response")
+
+plot_this <- subset(test_set_dt, select=c('net_load_ramp_t_MWh', 'prediction_decision_tree'))
+
+write.csv(plot_this, "decision_tree.csv")
+
+
 
 
 
