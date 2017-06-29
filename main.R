@@ -663,7 +663,31 @@ names(plot_this)[4] <- "actual_ramp"
 # for reproducability:
 set.seed(1)
 
+# decision tree with cross validation #############
 
+# data sets have to be dataframes
+training_dt <- as.data.frame(training)
+test_set_dt <- as.data.frame(test_set)
+
+
+
+
+decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + month2 + month3 + month4 + month5 + month6
+                       + month7 + month8 + month9 + month10 + month11 + month12
+                       + hour1 + hour2 + hour3 + hour4 + hour5 + hour6 + hour7 + hour8 + hour9 + hour10 + hour11 + hour12
+                       + hour13 + hour14 + hour15 + hour16 + hour17 + hour18 + hour19 + hour20 + hour21 + hour22 + hour23
+                       + weekdayMonday + weekdaySaturday + weekdaySunday + weekdayThursday + weekdayTuesday + weekdayWednesday
+                       + net_load_t_minus_1_MWh + net_load_t_minus_2_MWh + net_load_t_minus_3_MWh 
+                       + net_load_t_minus_4_MWh + net_load_t_minus_5_MWh + net_load_t_minus_6_MWh
+                       + wind_solar_t_minus_1_MWh + wind_solar_t_minus_2_MWh + wind_solar_t_minus_3_MWh
+                       + wind_solar_t_minus_4_MWh + wind_solar_t_minus_5_MWh + wind_solar_t_minus_6_MWh,
+                       #      distribution = "bernoulli",
+                             data = training_dt,
+                             n.trees = 200,
+                             shrinkage = .1,
+                             n.minobsinnode = 200, 
+                             cv.folds = 5,
+                             n.cores = 1)
 
 
 
