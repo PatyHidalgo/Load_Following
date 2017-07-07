@@ -417,7 +417,7 @@ test_set_dt <- as.data.frame(test_set)
 
 
 
-decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
+decision_tree_cv = gbm(formula = duck_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
                        + factor(month4) + factor(month5) + factor(month6)
                        + factor(month7) + factor(month8) + factor(month9) + factor(month10) + factor(month11) + factor(month12)
                        + factor(hour1) + factor(hour2) + factor(hour3) + factor(hour4) + factor(hour5) + factor(hour6)
@@ -440,7 +440,7 @@ decision_tree_cv = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(m
 # optimal number of trees
 bestTreeForPrediction = gbm.perf(decision_tree_cv)
 
-decision_tree_cv_optimal = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
+decision_tree_cv_optimal = gbm(formula = duck_ramp_t_MWh ~ factor(month1) + factor(month2) + factor(month3) 
                        + factor(month4) + factor(month5) + factor(month6)
                        + factor(month7) + factor(month8) + factor(month9) + factor(month10) + factor(month11) + factor(month12)
                        + factor(hour1) + factor(hour2) + factor(hour3) + factor(hour4) + factor(hour5) + factor(hour6)
@@ -462,8 +462,6 @@ decision_tree_cv_optimal = gbm(formula = net_load_ramp_t_MWh ~ factor(month1) + 
                        n.cores = 1)
 
 # prediction
-
-
 test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optimal,
                                 newdata = subset(test_set_dt, 
                                                  select = c(month1, month2, month3, month4, month5, month6, month7,
@@ -482,9 +480,9 @@ test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optima
                                 n.trees = bestTreeForPrediction,
                                 type = "response")
 
-plot_this <- subset(test_set_dt, select=c('net_load_ramp_t_MWh', 'prediction_decision_tree'))
+plot_this <- subset(test_set_dt, select=c('duck_ramp_t_MWh', 'prediction_decision_tree'))
 
-write.csv(plot_this, "decision_tree_v2.csv")
+write.csv(plot_this, "decision_tree_duck.csv")
 
 
 
