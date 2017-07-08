@@ -113,7 +113,15 @@ hourly_2016<- hourly_2016[order(hourly_2016$year,
 hourly_2016 <- calculate_ramps(hourly_2016)
 
 # data cleaning (replacing defective data for the average of the ramp from t-1 and t+1)
+source("data_cleaning.R")
+source("data_cleaning_2.R")
 hourly_2016 <- data_cleaning(hourly_2016)
+hourly_2016 <- data_cleaning_2(hourly_2016)
+rownames(hourly_2016) <- NULL # renumbering rows
+# dropping the last rows by hand:
+hourly_2016 <- hourly_2016[-c(6629, 6629+1, 6629+2, 6629+3, 6629+4, 6629+5), ]
+rownames(hourly_2016) <- NULL # renumbering rows
+
 
 
 # picking an arbitrary training set
