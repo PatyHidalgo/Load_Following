@@ -17,6 +17,7 @@ library(gbm)
 source("filter_and_check.R")
 source("process_load.R")
 source("calculate_ramps.R")
+source("data_cleaning.R")
 
 # wind+solar data import
 wind_solar_01_2016 <- read.csv("./wind_solar_relational/01_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
@@ -110,6 +111,9 @@ hourly_2016<- hourly_2016[order(hourly_2016$year,
 
 # calculatin load and wind+solar ramps
 hourly_2016 <- calculate_ramps(hourly_2016)
+
+# data cleaning (replacing defective data for the average of the ramp from t-1 and t+1)
+hourly_2016 <- data_cleaning(hourly_2016)
 
 
 # picking an arbitrary training set
@@ -399,7 +403,7 @@ names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "least squares"
 names(plot_this)[4] <- "actual_ramp"
-#write.csv(plot_this, "ridge_lasso_leastsquares_optimal_lambda_duck.csv")
+write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda.csv")
 
 # for another time: compare least squares from glmnet() and lm()
 #continue here
