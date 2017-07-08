@@ -436,7 +436,7 @@ decision_tree_cv = gbm(formula = duck_ramp_t_MWh ~ factor(month1) + factor(month
                        + wind_solar_t_minus_4_MWh + wind_solar_t_minus_5_MWh + wind_solar_t_minus_6_MWh,
                        #      distribution = "bernoulli",
                              data = training_dt,
-                             n.trees = 2000,
+                             n.trees = 4000, #4000 was good #3000 #2000
                              shrinkage = .1,
                              n.minobsinnode = 20, # 200
                              cv.folds = 5,
@@ -486,7 +486,10 @@ test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optima
 
 plot_this <- subset(test_set_dt, select=c('duck_ramp_t_MWh', 'prediction_decision_tree'))
 
-write.csv(plot_this, "decision_tree_duck.csv")
+write.csv(plot_this, "duck_filtered_decision_tree.csv")
+
+# Calculating prediction errors for all ML algorithms ###################################################################
+#continue here
 
 
 
