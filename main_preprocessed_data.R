@@ -404,9 +404,37 @@ names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "least squares"
 names(plot_this)[4] <- "actual_ramp"
 write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda.csv")
-
 # for another time: compare least squares from glmnet() and lm()
-#continue here
+
+# Calculating prediction errors (in MWh) for ridge, lasso and OLS #####
+test_set_with_errors<- cbind(test_set, prediction_ridge, prediction_lasso, prediction_least)
+test_set_with_errors <- as.data.frame(test_set_with_errors)
+names(test_set_with_errors)[56] <- "prediction_ridge"
+names(test_set_with_errors)[57] <- "prediction_lasso"
+names(test_set_with_errors)[58] <- "prediction_least"
+
+test_set_with_errors$error_ridge <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_ridge)#/test_set_with_errors$duck_ramp_t_MWh*100
+test_set_with_errors$error_lasso <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_lasso)#/test_set_with_errors$duck_ramp_t_MWh*100
+test_set_with_errors$error_least <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_least)#/test_set_with_errors$duck_ramp_t_MWh*100
+
+#calculating max (caiso's benchmark)
+
+benchmark <- as.data.frame(training)
+benchmark_month1 <- max(abs(benchmark[which(benchmark$month1==1),c("duck_ramp_t_MWh")]))
+benchmark_month2 <- max(abs(benchmark[which(benchmark$month2==1),c("duck_ramp_t_MWh")]))
+benchmark_month3 <- max(abs(benchmark[which(benchmark$month3==1),c("duck_ramp_t_MWh")]))
+benchmark_month4 <- max(abs(benchmark[which(benchmark$month4==1),c("duck_ramp_t_MWh")]))
+benchmark_month5 <- max(abs(benchmark[which(benchmark$month5==1),c("duck_ramp_t_MWh")]))
+benchmark_month6 <- max(abs(benchmark[which(benchmark$month6==1),c("duck_ramp_t_MWh")]))
+benchmark_month7 <- max(abs(benchmark[which(benchmark$month7==1),c("duck_ramp_t_MWh")]))
+benchmark_month8 <- max(abs(benchmark[which(benchmark$month8==1),c("duck_ramp_t_MWh")]))
+benchmark_month9 <- max(abs(benchmark[which(benchmark$month9==1),c("duck_ramp_t_MWh")]))
+benchmark_month10 <- max(abs(benchmark[which(benchmark$month10==1),c("duck_ramp_t_MWh")]))
+benchmark_month11 <- max(abs(benchmark[which(benchmark$month11==1),c("duck_ramp_t_MWh")]))
+benchmark_month12 <- max(abs(benchmark[which(benchmark$month12==1),c("duck_ramp_t_MWh")]))
+
+#continue here: investigate why the max is greater than the cap of duck_ramp (data_cleaning.R)  
+  
 # DECISION TREE (BOOSTED) #############################################################################################
 
 # for reproducability:
@@ -488,8 +516,10 @@ plot_this <- subset(test_set_dt, select=c('duck_ramp_t_MWh', 'prediction_decisio
 
 write.csv(plot_this, "duck_filtered_decision_tree.csv")
 
-# Calculating prediction errors for all ML algorithms ###################################################################
-#continue here
+# Calculating prediction errors for decision tree ####
+
+test_set_dt$error_tree <- test_set_dt$duck_ramp_t_MWh - test_set_dt$prediction_decision_tree
+
 
 
 
