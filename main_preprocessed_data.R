@@ -411,7 +411,7 @@ names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "least squares"
 names(plot_this)[4] <- "actual_ramp"
-write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda.csv")
+write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda_v2.csv")
 # for another time: compare least squares from glmnet() and lm()
 
 # Calculating prediction errors (in MWh) for ridge, lasso and OLS #####
@@ -421,9 +421,9 @@ names(test_set_with_errors)[56] <- "prediction_ridge"
 names(test_set_with_errors)[57] <- "prediction_lasso"
 names(test_set_with_errors)[58] <- "prediction_least"
 
-test_set_with_errors$error_ridge <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_ridge)#/test_set_with_errors$duck_ramp_t_MWh*100
-test_set_with_errors$error_lasso <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_lasso)#/test_set_with_errors$duck_ramp_t_MWh*100
-test_set_with_errors$error_least <- (test_set_with_errors$duck_ramp_t_MWh - test_set_with_errors$prediction_least)#/test_set_with_errors$duck_ramp_t_MWh*100
+test_set_with_errors$Ridge <- (abs(test_set_with_errors$prediction_ridge) - abs(test_set_with_errors$duck_ramp_t_MWh))
+test_set_with_errors$Lasso <- (abs(test_set_with_errors$prediction_lasso) - abs(test_set_with_errors$duck_ramp_t_MWh))
+test_set_with_errors$OLS <- (abs(test_set_with_errors$prediction_least) - abs(test_set_with_errors$duck_ramp_t_MWh))
 
 #calculating max (caiso's benchmark)
 
@@ -441,7 +441,28 @@ benchmark_month10 <- max(abs(benchmark[which(benchmark$month10==1),c("duck_ramp_
 benchmark_month11 <- max(abs(benchmark[which(benchmark$month11==1),c("duck_ramp_t_MWh")]))
 benchmark_month12 <- max(abs(benchmark[which(benchmark$month12==1),c("duck_ramp_t_MWh")]))
 
-#continue here: investigate why the max is greater than the cap of duck_ramp (data_cleaning.R)  
+#calulating benchmark's error
+test_set_with_errors$prediction_benchmark <- ifelse(test_set_with_errors$month1 == 1, benchmark_month1,
+                                                    ifelse(test_set_with_errors$month2 == 1, benchmark_month2,
+                                                    ifelse(test_set_with_errors$month3 == 1, benchmark_month3,
+                                                    ifelse(test_set_with_errors$month4 == 1, benchmark_month4,
+                                                    ifelse(test_set_with_errors$month5 == 1, benchmark_month5,
+                                                    ifelse(test_set_with_errors$month6 == 1, benchmark_month6,
+                                                    ifelse(test_set_with_errors$month7 == 1, benchmark_month7,
+                                                    ifelse(test_set_with_errors$month8 == 1, benchmark_month8,
+                                                    ifelse(test_set_with_errors$month9 == 1, benchmark_month9,
+                                                    ifelse(test_set_with_errors$month10 == 1, benchmark_month10,
+                                                    ifelse(test_set_with_errors$month11 == 1, benchmark_month11,
+                                                    ifelse(test_set_with_errors$month12 == 1, benchmark_month12,0))))))))))))
+
+test_set_with_errors$Benchmark <- (abs(test_set_with_errors$prediction_benchmark) - abs(test_set_with_errors$duck_ramp_t_MWh))
+
+#boxplot(test_set_with_errors$error_ridge,data=test_set_with_errors, #main="Prediction error (MWh)", 
+#        xlab="Machine Learning algorithm", ylab="Prediction error (MWh)")
+
+ggplot(stack(test_set_with_errors[,c("Ridge", "Lasso", "OLS", "Benchmark")]), aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") 
+
   
 # DECISION TREE (BOOSTED) #############################################################################################
 
