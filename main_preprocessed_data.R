@@ -457,12 +457,15 @@ test_set_with_errors$prediction_benchmark <- ifelse(test_set_with_errors$month1 
 
 test_set_with_errors$Benchmark <- (abs(test_set_with_errors$prediction_benchmark) - abs(test_set_with_errors$duck_ramp_t_MWh))
 
-#boxplot(test_set_with_errors$error_ridge,data=test_set_with_errors, #main="Prediction error (MWh)", 
-#        xlab="Machine Learning algorithm", ylab="Prediction error (MWh)")
+
+library(extrafont)
 
 ggplot(stack(test_set_with_errors[,c("Ridge", "Lasso", "OLS", "Benchmark")]), aes(x = ind, y = values)) +
-  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") 
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10)
 
+#savingthe figure
+ggsave("fig_1.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
   
 # DECISION TREE (BOOSTED) #############################################################################################
 
@@ -547,9 +550,69 @@ write.csv(plot_this, "duck_filtered_decision_tree.csv")
 
 # Calculating prediction errors for decision tree ####
 
-test_set_dt$error_tree <- test_set_dt$duck_ramp_t_MWh - test_set_dt$prediction_decision_tree
+test_set_dt$error_tree <- abs(test_set_dt$prediction_decision_tree) - abs(test_set_dt$duck_ramp_t_MWh)
+test_set_with_errors$prediction_decision_tree <- test_set_dt$prediction_decision_tree
+test_set_with_errors$DT <- (abs(test_set_dt$prediction_decision_tree) - abs(test_set_with_errors$duck_ramp_t_MWh))
+
+# Boxplot for all ML algorithms ##################################################################
+
+# Distributions of errors ######
+ggplot(stack(test_set_with_errors[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000))
+
+#savingthe figure
+ggsave("fig_errors.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
+
+# Table for mean abs(error) and standard dev. #########
+mean_error_ridge <- mean(abs(test_set_with_errors$Ridge))
+mean_error_lasso <- mean(abs(test_set_with_errors$Lasso))
+mean_error_OLS <- mean(abs(test_set_with_errors$OLS))
+mean_error_DT <- mean(abs(test_set_with_errors$DT))
+mean_error_benchmark <- mean(abs(test_set_with_errors$Benchmark))
+
+sd_error_ridge <- sd(abs(test_set_with_errors$Ridge))
+sd_error_lasso <- sd(abs(test_set_with_errors$Lasso))
+sd_error_OLS <- sd(abs(test_set_with_errors$OLS))
+sd_error_DT <- sd(abs(test_set_with_errors$DT))
+sd_error_benchmark <- sd(abs(test_set_with_errors$Benchmark))
+
+# Distributions of predicted ramps #######
+
+plot_ramps <- test_set_with_errors
+plot_ramps$Ridge <- NULL
+plot_ramps$Lasso <- NULL
+plot_ramps$OLS <- NULL
+plot_ramps$DT <- NULL
+plot_ramps$Benchmark <- NULL
+names(plot_ramps)[56] <- "Ridge"
+names(plot_ramps)[57] <- "Lasso"
+names(plot_ramps)[58] <- "OLS"
+names(plot_ramps)[62] <- "Benchmark"
+names(plot_ramps)[64] <- "DT"
 
 
+ggplot(stack(plot_ramps[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000))
+
+#savingthe figure
+ggsave("fig_predicted_ramps.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
+
+
+# Distributions of actual ramps in test set #######
+
+ggplot(data=plot_ramps, aes(plot_ramps$duck_ramp_t_MWh)) + 
+  geom_histogram(breaks=seq(-5000, 5000, by = 1000), 
+                 col="black", 
+                 fill="gray", 
+                 alpha = .2) + 
+  labs(x="Ramp (MWh)", y="Count") +
+  theme_bw(base_family = "serif", base_size = 10)
+#  xlim(c(18,52)) + 
+#  ylim(c(0,30)) +
+# labs(title="Histogram for Age") 
+ggsave("fig_test_set_actual_ramps.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
 
 
 
