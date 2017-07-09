@@ -688,7 +688,7 @@ subplot(jan, feb, mar, apr,
         shareY = TRUE, shareX = TRUE, nrows = 3, titleY = TRUE)
 dev.off()
 
-ggsave("fig_month_error.png", p, dpi=300, dev='png', height=6, width=9, units="in") # 2 2, 4 5, 3 4
+ggsave("fig_month_error.png", dpi=300, dev='png', height=6, width=9, units="in") # 2 2, 4 5, 3 4
 
 # try 2 #######
 
@@ -817,5 +817,78 @@ ggplot(stack(test_set_with_errors[which(test_set_with_errors$month12==1),c("Ridg
 
 
 
-# continue here:
+# continue here: this one worked the best (but couldn't save it or size it well)
+
+
 # Economic impact ##################################################################################
+
+# import data
+price_01_2016p1 <- read.csv("./as_prices/01_2016_p1.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_01_2016p2 <- read.csv("./as_prices/01_2016_p2.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_02_2016 <- read.csv("./as_prices/02_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_03_2016 <- read.csv("./as_prices/03_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_04_2016 <- read.csv("./as_prices/04_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_05_2016p1 <- read.csv("./as_prices/05_2016_p1.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_05_2016p2 <- read.csv("./as_prices/05_2016_p2.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_06_2016 <- read.csv("./as_prices/06_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_07_2016 <- read.csv("./as_prices/07_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_08_2016 <- read.csv("./as_prices/08_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_09_2016 <- read.csv("./as_prices/09_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_10_2016 <- read.csv("./as_prices/10_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_11_2016 <- read.csv("./as_prices/11_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+price_12_2016 <- read.csv("./as_prices/12_2016.csv",stringsAsFactors=F, header = T , fill = TRUE, sep = ",", quote = "\"", dec = ".") 
+
+# procesing prices
+source("process_prices.R")
+sr_price_01_2016p1 <- process_prices(price_01_2016p1)
+sr_price_01_2016p2 <- process_prices(price_01_2016p2)
+sr_price_02_2016 <- process_prices(price_02_2016)
+sr_price_03_2016 <- process_prices(price_03_2016)
+sr_price_04_2016 <- process_prices(price_04_2016)
+sr_price_05_2016p1 <- process_prices(price_05_2016p1)
+sr_price_05_2016p2 <- process_prices(price_05_2016p2)
+sr_price_06_2016 <- process_prices(price_06_2016)
+sr_price_07_2016 <- process_prices(price_07_2016)
+sr_price_08_2016 <- process_prices(price_08_2016)
+sr_price_09_2016 <- process_prices(price_09_2016)
+sr_price_10_2016 <- process_prices(price_10_2016)
+sr_price_11_2016 <- process_prices(price_11_2016)
+sr_price_12_2016 <- process_prices(price_12_2016)
+
+# append all months to have only one set for the year
+price_hourly_2016 <- rbind(sr_price_01_2016p1, 
+                           sr_price_01_2016p2,
+                           sr_price_02_2016,
+                           sr_price_03_2016,
+                           sr_price_04_2016,
+                           sr_price_05_2016p1,
+                           sr_price_05_2016p2,
+                           sr_price_06_2016,
+                           sr_price_07_2016,
+                           sr_price_08_2016,
+                           sr_price_09_2016,
+                           sr_price_10_2016,
+                           sr_price_11_2016,
+                           sr_price_12_2016)
+
+# order by year, month, day, and hour
+price_hourly_2016<- price_hourly_2016[order(price_hourly_2016$year, 
+                                      price_hourly_2016$month, 
+                                      price_hourly_2016$day,
+                                      price_hourly_2016$hour),]
+
+# just to look at duplicates
+price_hourly_2016[duplicated(price_hourly_2016), ]
+
+# dropped duplicates
+price_hourly_2016 <- unique(price_hourly_2016)
+
+# continue here: turn month, hour into categorical so we can merge with predictions dataframes.
+
+
+
+
+
+
+
+
