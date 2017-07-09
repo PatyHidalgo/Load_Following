@@ -411,7 +411,7 @@ names(plot_this)[1] <- 'ridge'
 names(plot_this)[2] <- "lasso"
 names(plot_this)[3] <- "least squares"
 names(plot_this)[4] <- "actual_ramp"
-write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda_v2.csv")
+#write.csv(plot_this, "duck_filtered_ridge_lasso_leastsquares_optimal_lambda_v2.csv")
 # for another time: compare least squares from glmnet() and lm()
 
 # Calculating prediction errors (in MWh) for ridge, lasso and OLS #####
@@ -546,7 +546,7 @@ test_set_dt$prediction_decision_tree <- predict(object = decision_tree_cv_optima
 
 plot_this <- subset(test_set_dt, select=c('duck_ramp_t_MWh', 'prediction_decision_tree'))
 
-write.csv(plot_this, "duck_filtered_decision_tree.csv")
+#write.csv(plot_this, "duck_filtered_decision_tree.csv")
 
 # Calculating prediction errors for decision tree ####
 
@@ -588,8 +588,8 @@ plot_ramps$Benchmark <- NULL
 names(plot_ramps)[56] <- "Ridge"
 names(plot_ramps)[57] <- "Lasso"
 names(plot_ramps)[58] <- "OLS"
-names(plot_ramps)[62] <- "Benchmark"
-names(plot_ramps)[64] <- "DT"
+names(plot_ramps)[59] <- "Benchmark"
+names(plot_ramps)[60] <- "DT"
 
 
 ggplot(stack(plot_ramps[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
@@ -616,4 +616,206 @@ ggsave("fig_test_set_actual_ramps.png", dpi=300, dev='png', height=3, width=4, u
 
 
 
+# Distributions of predictions per month per algorithm (one figure per alg with 12 boxplots) ######
 
+# try 1 #####
+library(plotly)
+
+jan <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month1==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="January") 
+
+feb <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month2==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="February") 
+
+mar <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month3==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="March") 
+
+apr <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month4==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="April") 
+
+may <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month5==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="May") 
+
+jun <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month6==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="June") 
+
+jul <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month7==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="July") 
+
+aug <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month8==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="August") 
+
+sep <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month9==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="September") 
+
+oct <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month10==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="October") 
+
+nov <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month11==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="November") 
+
+dec <- ggplot(stack(test_set_with_errors[which(test_set_with_errors$month12==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+       aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="December") 
+
+pdf('rplot.pdf')
+subplot(jan, feb, mar, apr, 
+        may, jun, jul, aug,
+        sep, oct, nov, dec,
+        shareY = TRUE, shareX = TRUE, nrows = 3, titleY = TRUE)
+dev.off()
+
+ggsave("fig_month_error.png", p, dpi=300, dev='png', height=6, width=9, units="in") # 2 2, 4 5, 3 4
+
+# try 2 #######
+
+old.par <- par(mfrow=c(4, 3))
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month1==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="January") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month2==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="February") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month3==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="March") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month4==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="April") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month5==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="May") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month6==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="June") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month7==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="July") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month8==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="August") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month9==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="September") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month10==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="October") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month11==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="November") 
+
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month12==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="December") 
+par(old.par)
+
+#p <- subplot(jan, feb, mar, apr, 
+#        may, jun, jul, aug,
+#        sep, oct, nov, dec,
+#        shareY = TRUE, shareX = TRUE, nrows = 4)
+ggsave("fig_month_error.png", dpi=300, dev='png', height=6, width=8, units="in") # 2 2, 4 5, 3 4
+
+
+
+# try 3 #####
+
+par(mfrow=c(3,4))
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month1==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="January") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month2==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="February") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month3==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="March") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month4==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="April") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month5==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="May") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month6==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="June") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month7==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="July") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month8==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="August") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month9==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="September") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month10==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="October") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month11==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + #labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="November") 
+ggplot(stack(test_set_with_errors[which(test_set_with_errors$month12==1),c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), 
+              aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000)) + labs(title="December") 
+
+
+
+# continue here:
+# Economic impact ##################################################################################
