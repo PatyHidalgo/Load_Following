@@ -558,7 +558,7 @@ test_set_with_errors$DT <- (abs(test_set_dt$prediction_decision_tree) - abs(test
 
 # Distributions of errors ######
 ggplot(stack(test_set_with_errors[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
-  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction error (MWh)") +
+  geom_boxplot() + labs(x = "Algorithm") + labs(y = "Prediction error (MWh)") +
   theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000))
 
 #savingthe figure
@@ -593,12 +593,22 @@ names(plot_ramps)[60] <- "DT"
 
 
 ggplot(stack(plot_ramps[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
-  geom_boxplot() + labs(x = "Machine Learning algorithm") + labs(y = "Prediction (MWh)") +
+  geom_boxplot() + labs(x = "Algorithm") + labs(y = "Prediction (MWh)") +
   theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000))
 
 #savingthe figure
 ggsave("fig_predicted_ramps.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
 
+
+# same plot in .tiff
+
+tiff("fig_predicted_ramps_tiff.tiff", width = 3, height = 3, units = 'in', res = 300)
+
+ggplot(stack(plot_ramps[,c("Ridge", "Lasso", "OLS", "DT","Benchmark")]), aes(x = ind, y = values)) +
+  geom_boxplot() + labs(x = "Algorithm") + labs(y = "Prediction (MWh)") +
+  theme_bw(base_family = "serif", base_size = 10) +  ylim(c(-5000,5000))
+
+dev.off()
 
 # Distributions of actual ramps in test set #######
 
@@ -883,12 +893,154 @@ price_hourly_2016[duplicated(price_hourly_2016), ]
 # dropped duplicates
 price_hourly_2016 <- unique(price_hourly_2016)
 
-# continue here: turn month, hour into categorical so we can merge with predictions dataframes.
+# converting ramps (actual and predicted) dataframe into a dataframe without categorical vars.
+
+ramp <- plot_ramps
+ramp$month <- ifelse(ramp$month1==1, 1, 
+                     ifelse(ramp$month2==1, 2, 
+                     ifelse(ramp$month3==1, 3,
+                     ifelse(ramp$month4==1, 4,
+                     ifelse(ramp$month5==1, 5,
+                     ifelse(ramp$month6==1, 6,
+                     ifelse(ramp$month7==1, 7,
+                     ifelse(ramp$month8==1, 8,
+                     ifelse(ramp$month9==1, 9,
+                     ifelse(ramp$month10==1, 10,
+                     ifelse(ramp$month11==1, 11,
+                     ifelse(ramp$month12==1, 12, 0))))))))))))
+
+ramp$hour <- ifelse(ramp$hour1==1, 1, 
+                     ifelse(ramp$hour2==1, 2, 
+                            ifelse(ramp$hour3==1, 3,
+                                   ifelse(ramp$hour4==1, 4,
+                                          ifelse(ramp$hour5==1, 5,
+                                                 ifelse(ramp$hour6==1, 6,
+                                                        ifelse(ramp$hour7==1, 7,
+                                                               ifelse(ramp$hour8==1, 8,
+                                                                      ifelse(ramp$hour9==1, 9,
+                                                                             ifelse(ramp$hour10==1, 10,
+                                                                                    ifelse(ramp$hour11==1, 11,
+                                                                                           ifelse(ramp$hour12==1, 12, 
+                                                                                                  ifelse(ramp$hour13==1, 13, 
+                                                                                                         ifelse(ramp$hour14==1, 14, 
+                                                                                                                ifelse(ramp$hour15==1, 15, 
+                                                                                                                       ifelse(ramp$hour16==1, 16, 
+                                                                                                                              ifelse(ramp$hour17==1, 17, 
+                                                                                                                                     ifelse(ramp$hour18==1, 18, 
+                                                                                                                                            ifelse(ramp$hour19==1, 19, 
+                                                                                                                                                   ifelse(ramp$hour20==1, 20, 
+                                                                                                                                                          ifelse(ramp$hour21==1, 21, 
+                                                                                                                                                                 ifelse(ramp$hour22==1, 22, 
+                                                                                                                                                                        ifelse(ramp$hour23==1, 23, 0)))))))))))))))))))))))
+ramp$year <- 2016
+
+# merging ramps and price dataframes:
+ramps_and_prices <- merge(ramp, price_hourly_2016,by=c("year","month", "day", "hour"))
+
+# order by year, month, day, and hour
+ramps_and_prices<- ramps_and_prices[order(ramps_and_prices$year, 
+                                          ramps_and_prices$month, 
+                                          ramps_and_prices$day,
+                                          ramps_and_prices$hour),]
+# drop redundant columns
+ramps_and_prices$month2 <- NULL
+ramps_and_prices$month3 <- NULL
+ramps_and_prices$month4 <- NULL
+ramps_and_prices$month5 <- NULL
+ramps_and_prices$month6 <- NULL
+ramps_and_prices$month7 <- NULL
+ramps_and_prices$month8 <- NULL
+ramps_and_prices$month9 <- NULL
+ramps_and_prices$month10 <- NULL
+ramps_and_prices$month11 <- NULL
+ramps_and_prices$month12 <- NULL
+
+ramps_and_prices$hour1 <- NULL
+ramps_and_prices$hour2 <- NULL
+ramps_and_prices$hour3 <- NULL
+ramps_and_prices$hour4 <- NULL
+ramps_and_prices$hour5 <- NULL
+ramps_and_prices$hour6 <- NULL
+ramps_and_prices$hour7 <- NULL
+ramps_and_prices$hour8 <- NULL
+ramps_and_prices$hour9 <- NULL
+ramps_and_prices$hour10 <- NULL
+ramps_and_prices$hour11 <- NULL
+ramps_and_prices$hour12 <- NULL
+ramps_and_prices$hour13 <- NULL
+ramps_and_prices$hour14 <- NULL
+ramps_and_prices$hour15 <- NULL
+ramps_and_prices$hour16 <- NULL
+ramps_and_prices$hour17 <- NULL
+ramps_and_prices$hour18 <- NULL
+ramps_and_prices$hour19 <- NULL
+ramps_and_prices$hour20 <- NULL
+ramps_and_prices$hour21 <- NULL
+ramps_and_prices$hour22 <- NULL
+ramps_and_prices$hour23 <- NULL
+
+# CALCULATING costs
+
+ramps_and_prices$Cost_Ridge <- abs(ramps_and_prices$Ridge*ramps_and_prices$Price_dollars_per_MWh)
+ramps_and_prices$Cost_Lasso <- abs(ramps_and_prices$Lasso*ramps_and_prices$Price_dollars_per_MWh)
+ramps_and_prices$Cost_OLS <- abs(ramps_and_prices$OLS*ramps_and_prices$Price_dollars_per_MWh)
+ramps_and_prices$Cost_DT <- abs(ramps_and_prices$DT*ramps_and_prices$Price_dollars_per_MWh)
+ramps_and_prices$Cost_Benchmark <- abs(ramps_and_prices$Benchmark*ramps_and_prices$Price_dollars_per_MWh)
+
+# adding costs across all timepoints in the test set
+Ridge <- sum(ramps_and_prices$Cost_Ridge)
+Lasso <- sum(ramps_and_prices$Cost_Lasso)
+OLS <- sum(ramps_and_prices$Cost_OLS)
+DT <- sum(ramps_and_prices$Cost_DT)
+Benchmark <- sum(ramps_and_prices$Cost_Benchmark)
+
+Ridge <- Ridge/Benchmark*100 # 30%
+Lasso <- Lasso/Benchmark*100 # 33%
+OLS <- OLS/Benchmark*100 # 30%
+DT <- DT/Benchmark*100 # 34%
+
+# creating dataframe with the costs
+Algorithm <- c('Benchmark', 'DT', 'Lasso','OLS', 'Ridge')
+Cost <- c(100, DT, Lasso, OLS, Ridge)
+cost_data <- data.frame(Algorithm, Cost)
+
+
+# plot costs #######
+
+ggplot(data=cost_data, aes(x=Algorithm, y=Cost, fill=Algorithm)) +
+  geom_bar(colour="black", fill="grey90", stat="identity") +
+  guides(fill=FALSE) + labs(x="Algorithm", y="Cost with respect to Benchmark (%)") +
+  theme_bw(base_family = "serif", base_size = 10)
+
+#savingthe figure
+ggsave("fig_costs.png", dpi=300, dev='png', height=3, width=4, units="in") # 2 2, 4 5, 3 4
 
 
 
+# numbers for the paper ##################################################################
+
+median(ramps_and_prices$Ridge)
+median(ramps_and_prices$Lasso)
+median(ramps_and_prices$OLS)
+median(ramps_and_prices$DT)
+
+sd(ramps_and_prices$DT)
+sd(ramps_and_prices$Lasso)
+sd(ramps_and_prices$OLS)
+sd(ramps_and_prices$Ridge)
+
+median(ramps_and_prices$Benchmark)
 
 
+mean(test_set_with_errors$Ridge)
+mean(test_set_with_errors$Lasso)
+mean(test_set_with_errors$OLS)
+mean(test_set_with_errors$DT)
+mean(test_set_with_errors$Benchmark)
 
-
+sd(test_set_with_errors$Ridge)
+sd(test_set_with_errors$Lasso)
+sd(test_set_with_errors$OLS)
+sd(test_set_with_errors$DT)
+sd(test_set_with_errors$Benchmark)
 
